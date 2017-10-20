@@ -1,0 +1,24 @@
+{
+  "name": "nop",
+  "version": "0.0.1",
+  "description": "A Node Framework For Web Artisans",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "dmpty",
+  "license": "MIT",
+  "dependencies": {
+    "handlebars": "^4.0.11"
+  },
+  "repository": "dmpty/nop",
+  "keywords": [
+    "nop",
+    "framework"
+  ],
+  "files": [
+    "README.md",
+    "index.js",
+    "lib/"
+  ]
+}
