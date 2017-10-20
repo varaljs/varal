@@ -1,39 +1,40 @@
 var http = require('http');
 var Router = require('./lib/router');
-var Nop = {
+var Varal = {
     createNew: function (options) {
-        var nop = {};
+        var varal = {};
         options = options || {};
-        nop.name = options.name || 'default';
-        nop.port = options.port || 8888;
-        nop.view_path = options.view_path || 'view';
-        nop.controller_path = options.controller_path || 'controller';
-        nop.run = function () {
+        varal.map = [];
+        varal.name = options.name || 'default';
+        varal.port = options.port || 8888;
+        varal.view_path = options.view_path || 'view';
+        varal.controller_path = options.controller_path || 'controller';
+        varal.run = function () {
             http.createServer(function (request, response) {
                 var app = {
                     request: request,
                     response: response,
-                    view_path: nop.view_path,
-                    controller_path: nop.controller_path
+                    view_path: varal.view_path,
+                    controller_path: varal.controller_path
                 };
                 var router = Router.createNew(app);
-                router.handle();
-            }).listen(nop.port);
-            console.log("Nop Server '" + nop.name + "' has started.");
+                router.handle(varal.map);
+            }).listen(varal.port);
+            console.log("Varal Server '" + varal.name + "' has started.");
         };
-        nop.get = function (path, callback) {
-            for (var key in Router.map) {
-                if (Router.map[key].path === path) {
-                    Router.map.splice(key, 1);
+        varal.get = function (path, callback) {
+            for (var key in varal.map) {
+                if (varal.map[key].path === path) {
+                    varal.map.splice(key, 1);
                 }
             }
-            Router.map.push({
+            varal.map.push({
                 path: path,
                 callback: callback
             })
         };
-        return nop;
+        return varal;
     }
 };
 
-module.exports = Nop;
+module.exports = Varal;
