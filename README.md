@@ -6,9 +6,21 @@ A Node Framework For Web Artisans
 [npm-image]: https://img.shields.io/npm/v/varal.svg
 [npm-url]: https://npmjs.org/package/varal
 
+## Features
+
+  * Simple Route
+  * Controller
+  * Template Engine `Handlebars`
+  
+## Todo
+
+  * Model and ORM
+  * Middleware
+  * Error Handler
+
 ## Installation
 ```bash
-$ npm install express
+$ npm install varal --save
 ```
 
 ## Quick Start
