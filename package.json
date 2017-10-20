@@ -1,5 +1,5 @@
 {
-  "name": "nop",
+  "name": "varal",
   "version": "0.0.1",
   "description": "A Node Framework For Web Artisans",
   "main": "index.js",
@@ -11,9 +11,9 @@
   "dependencies": {
     "handlebars": "^4.0.11"
   },
-  "repository": "dmpty/nop",
+  "repository": "dmpty/varal",
   "keywords": [
-    "nop",
+    "varal",
     "framework"
   ],
   "files": [
