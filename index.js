@@ -12,6 +12,7 @@ var Varal = {
         varal.port = options.port || 8888;
         varal.view_path = options.view_path || 'view';
         varal.controller_path = options.controller_path || 'controller';
+        varal.static_paths = options.static_paths || ['public'];
         varal.run = function () {
             http.createServer(function (request, response) {
                 var app = {
@@ -20,7 +21,8 @@ var Varal = {
                     routes_map: varal.routes_map,
                     middleware_map: varal.middleware_map,
                     view_path: varal.view_path,
-                    controller_path: varal.controller_path
+                    controller_path: varal.controller_path,
+                    static_paths: varal.static_paths
                 };
                 var res = Response.createNew(app);
                 res.handle();
@@ -28,8 +30,9 @@ var Varal = {
             console.log("Varal Server '" + this.name + "' has started.");
         };
         varal.router = Router.createNew(varal);
+        varal.get = varal.router.get;
         return varal;
     }
 };
 
-module.exports = Varal;
+exports = module.exports = Varal;

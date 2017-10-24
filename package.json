@@ -3,13 +3,13 @@
   "version": "0.0.4",
   "description": "A Node Framework For Web Artisans",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "dmpty",
   "license": "MIT",
   "dependencies": {
-    "handlebars": "^4.0.11"
+    "handlebars": "^4.0.11",
+    "json-stable-stringify": "^1.0.1",
+    "serve-static": "^1.13.1"
   },
   "repository": "dmpty/varal",
   "keywords": [
