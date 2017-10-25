@@ -1,9 +1,12 @@
-var http = require('http');
-var Router = require('./lib/router');
-var Response = require('./lib/response');
-var Varal = {
+'use strict';
+
+let http = require('http');
+let Router = require('./lib/router');
+let Server = require('./lib/server');
+
+let Varal = {
     createNew: function (options) {
-        var varal = {};
+        let varal = {};
         options = options || {};
         varal.routes_map = [];
         varal.route_groups_map = [];
@@ -15,22 +18,28 @@ var Varal = {
         varal.static_paths = options.static_paths || ['public'];
         varal.run = function () {
             http.createServer(function (request, response) {
-                var app = {
-                    request: request,
-                    response: response,
+                let app = {
+                    req: request,
+                    res: response,
                     routes_map: varal.routes_map,
                     middleware_map: varal.middleware_map,
                     view_path: varal.view_path,
                     controller_path: varal.controller_path,
                     static_paths: varal.static_paths
                 };
-                var res = Response.createNew(app);
-                res.handle();
+                Server.init(app);
+                if (app.hasForm !== true)
+                    app.handle();
             }).listen(this.port);
             console.log("Varal Server '" + this.name + "' has started.");
         };
-        varal.router = Router.createNew(varal);
-        varal.get = varal.router.get;
+        let router = Router.createNew(varal);
+        varal.get = function (path, callback) {
+            router.add('GET', path, callback);
+        };
+        varal.post = function (path, callback) {
+            router.add('POST', path, callback);
+        };
         return varal;
     }
 };

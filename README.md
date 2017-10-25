@@ -1,5 +1,5 @@
 # Varal
-A Node Framework For Web Artisans
+轻量级的，易用的 Web 框架
 
 [![NPM Version][npm-image]][npm-url]
 
@@ -8,15 +8,16 @@ A Node Framework For Web Artisans
 
 ## Features
 
-  * Simple Route
-  * Controller
-  * Template Engine `Handlebars`
+* Simple Route
+* Controller
+* Template Engine `Handlebars`
   
 ## Todo
 
-  * Model and ORM
-  * Middleware
-  * Error Handler
+* Route Group
+* Middleware
+* Model and ORM
+* Error Handler
 
 ## Installation
 ```bash
@@ -26,50 +27,51 @@ $ npm install varal --save
 ## Quick Start
 以下代码运行后访问 `localhost:8888` 即可看到输出：
 ```javascript
-var app = require('varal').createNew();
-app.get('/', function (res) {
-    res.text('Hello World!');
+let server = require('varal').createNew();
+server.get('/', function (app) {
+    app.text('Hello World!');
 });
-app.run();
+server.run();
 ```
 可以向 `createNew` 方法传入一个配置对象：
 ```javascript
-var app = require('varal').createNew({
+let server = require('varal').createNew({
     port: 80,
     controller_path: 'YourControllerPath', // 默认值为 controller
-    view_path: 'YourViewPath' // 默认值为 view
+    view_path: 'YourViewPath', // 默认值为 view
+    static_paths: ['path1', 'path2'] // 默认值为 ['public']
 });
 ```
 #### 多服务：
 ```javascript
-var app = require('varal').createNew({
+let server1 = require('varal').createNew({
     name: 'Server 1',
     port: 80
 });
-var app2 = require('varal').createNew({
+let server2 = require('varal').createNew({
     name: 'Server 2',
     port: 8080
 });
-app.get('/', function (res) {
-    res.text('This is Server 1');
+server1.get('/', function (app) {
+    app.text('This is Server 1');
 });
-app2.get('/', function (res) {
-    res.text('This is Server 2');
+server2.get('/', function (app) {
+    app.text('This is Server 2');
 });
-app.run();
-app2.run();
+server1.run();
+server2.run();
 ```
 #### 使用控制器：
 ```javascript
-var app = require('varal').createNew();
-app.get('/', 'HomeController@index');
-app.run();
+let server = require('varal').createNew();
+server.get('/', 'HomeController@index');
+server.run();
 ```
 如果使用默认配置，框架将会寻找运行目录 `controller` 文件夹下的 `HomeController.js` 文件，这个文件需要返回一个拥有 `index` 方法的对象：
 ```javascript
 module.exports = {
-    index: function (res) {
-        res.text('Test');
+    index: function (app) {
+        app.text('Test');
     }
 };
 ```
@@ -81,8 +83,8 @@ module.exports = {
 ```
 路由：
 ```javascript
-app.get('/', function (res) {
-    res.render('test', {
+server.get('/', function (app) {
+    app.render('test', {
         title: 'Hello ',
         body: 'World!'
     })
