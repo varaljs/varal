@@ -8,24 +8,32 @@ let Varal = {
     createNew: function (options) {
         let varal = {};
         options = options || {};
-        varal.routesMap = [];
-        varal.routeGroupsMap = [];
-        varal.middlewareMap = [];
         varal.name = options.name || 'default';
         varal.port = options.port || 8888;
         varal.viewPath = options.viewPath || 'view';
         varal.controllerPath = options.controllerPath || 'controller';
-        varal.staticPaths = options.staticPaths || ['public'];
+        varal.staticPath = options.staticPath || 'public';
+        varal.router = Router.createNew();
+        varal.middlewareMap = [];
+        varal.get = function (path, callback) {
+            varal.router.defaultGroup.add('GET', path, callback);
+        };
+        varal.post = function (path, callback) {
+            varal.router.defaultGroup.add('POST', path, callback);
+        };
+        varal.group = function (options, callback) {
+            varal.router.defaultGroup.group(options, callback);
+        };
         varal.run = function () {
             http.createServer(function (request, response) {
                 let app = {
                     req: request,
                     res: response,
-                    routesMap: varal.routesMap,
-                    middlewareMap: varal.middlewareMap,
                     viewPath: varal.viewPath,
                     controllerPath: varal.controllerPath,
-                    staticPaths: varal.staticPaths
+                    staticPath: varal.staticPath,
+                    router: varal.router,
+                    middlewareMap: varal.middlewareMap
                 };
                 Server.init(app);
                 if (app.hasForm !== true)
@@ -33,13 +41,7 @@ let Varal = {
             }).listen(this.port);
             console.log("Varal Server '" + this.name + "' has started.");
         };
-        let router = Router.createNew(varal);
-        varal.get = function (path, callback) {
-            router.add('GET', path, callback);
-        };
-        varal.post = function (path, callback) {
-            router.add('POST', path, callback);
-        };
+
         return varal;
     }
 };
