@@ -8,24 +8,24 @@ let Varal = {
     createNew: function (options) {
         let varal = {};
         options = options || {};
-        varal.routes_map = [];
-        varal.route_groups_map = [];
-        varal.middleware_map = [];
+        varal.routesMap = [];
+        varal.routeGroupsMap = [];
+        varal.middlewareMap = [];
         varal.name = options.name || 'default';
         varal.port = options.port || 8888;
-        varal.view_path = options.view_path || 'view';
-        varal.controller_path = options.controller_path || 'controller';
-        varal.static_paths = options.static_paths || ['public'];
+        varal.viewPath = options.viewPath || 'view';
+        varal.controllerPath = options.controllerPath || 'controller';
+        varal.staticPaths = options.staticPaths || ['public'];
         varal.run = function () {
             http.createServer(function (request, response) {
                 let app = {
                     req: request,
                     res: response,
-                    routes_map: varal.routes_map,
-                    middleware_map: varal.middleware_map,
-                    view_path: varal.view_path,
-                    controller_path: varal.controller_path,
-                    static_paths: varal.static_paths
+                    routesMap: varal.routesMap,
+                    middlewareMap: varal.middlewareMap,
+                    viewPath: varal.viewPath,
+                    controllerPath: varal.controllerPath,
+                    staticPaths: varal.staticPaths
                 };
                 Server.init(app);
                 if (app.hasForm !== true)
