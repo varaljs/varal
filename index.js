@@ -3,6 +3,7 @@
 let http = require('http');
 let Router = require('./lib/router');
 let Server = require('./lib/server');
+let Middleware = require('./lib/middleware');
 
 let Varal = {
     createNew: function (options) {
@@ -14,16 +15,17 @@ let Varal = {
         varal.controllerPath = options.controllerPath || 'controller';
         varal.staticPath = options.staticPath || 'public';
         varal.router = Router.createNew();
-        varal.middlewareMap = [];
-        varal.get = function (path, callback) {
-            varal.router.defaultGroup.add('GET', path, callback);
+        varal.get = varal.router.defaultGroup.get;
+        varal.post = varal.router.defaultGroup.post;
+        varal.group = varal.router.defaultGroup.group;
+        varal.middleware = Middleware.createNew();
+        varal.add = varal.middleware.add;
+        varal.globalMiddleware = [];
+
+        varal.use = function (middleware) {
+            varal.globalMiddleware = middleware;
         };
-        varal.post = function (path, callback) {
-            varal.router.defaultGroup.add('POST', path, callback);
-        };
-        varal.group = function (options, callback) {
-            varal.router.defaultGroup.group(options, callback);
-        };
+
         varal.run = function () {
             http.createServer(function (request, response) {
                 let app = {
@@ -33,7 +35,8 @@ let Varal = {
                     controllerPath: varal.controllerPath,
                     staticPath: varal.staticPath,
                     router: varal.router,
-                    middlewareMap: varal.middlewareMap
+                    middleware: varal.middleware,
+                    globalMiddleware: varal.globalMiddleware
                 };
                 Server.init(app);
                 if (app.hasForm !== true)
