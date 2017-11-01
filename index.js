@@ -22,6 +22,13 @@ let Varal = {
         varal.add = varal.middleware.add;
         varal.globalMiddleware = [];
 
+        varal.error = function (err, app) {
+            let errorMsg = err.stack || err.message || 'Unknown Error';
+            console.log(errorMsg);
+            if (app.resIsEnd === false)
+                app.res.end('Something went wrong!');
+        };
+
         varal.use = function (middleware) {
             varal.globalMiddleware = middleware;
         };
@@ -38,9 +45,13 @@ let Varal = {
                     middleware: varal.middleware,
                     globalMiddleware: varal.globalMiddleware
                 };
-                Server.init(app);
-                if (app.hasForm !== true)
-                    app.handle();
+                try {
+                    Server.init(app);
+                    if (app.hasForm !== true)
+                        app.handle();
+                } catch (err) {
+                    varal.error(err, app)
+                }
             }).listen(this.port);
             console.log("Varal Server '" + this.name + "' has started.");
         };
