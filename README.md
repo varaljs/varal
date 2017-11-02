@@ -160,9 +160,38 @@ server.get('/', function (app) {
 <p>{{body}}</p>
 ```
 
-### 请求单例 `app`
+### 服务实例 API
+框架模组输出的对象只包含了一个伪构造函数 `createNew`，服务实例使用这个方法创建，只有一个可选参数，用于传入配置信息。
+**你可以创建多个端口不同的实例并同时运行**
 
-在 `路由` 与 `中间件` 的回调中，都会传入一个 `app` 参数，每个请求对应一个 `app` 实例。
+#### 方法
+* run()：运行服务
+* get(path, callback)：创建一个接收 `GET` 请求的路由，可以链式调用 `name` 方法来命名，以及 `use` 方法来加载中间件
+* post(path, callback)：创建一个接收 `POST` 请求的路由，可以链式调用 `name` 方法来命名，以及 `use` 方法来加载中间件
+* group([options, ]callback)：创建一个路由组，第一个为可选参数，传入配置选项
+* add(name, callback)：定义一个中间件，第一个参数为命名，用于绑定在路由或者路由组上
+* use(middleware)：加载全局中间件，参数类型为数组
+
+#### 可以重新定义的方法
+* error：Node发生错误时的处理函数
+```javascript
+server.error = function (err, app) {
+    // Do something
+};
+```
+* e404：找不到匹配的路由或静态文件时调用
+* e405：查询路由时路径匹配但没有匹配的请求方法时调用
+```javascript
+server.e404 = function(app) {
+    // Do something
+};
+server.e405 = function(app) {
+    // Do something
+};
+```
+
+### 请求实例 API
+每当请求发生时，都会实例化一个 `app` 对象，它提供的属性和方法可以对该请求进行处理，它经常作为参数出现在本框架的回调中，如 `路由` 与 `中间件`
 
 #### 属性
 * req：`request` 对象

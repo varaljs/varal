@@ -21,12 +21,13 @@ let Varal = {
         varal.middleware = Middleware.createNew();
         varal.add = varal.middleware.add;
         varal.globalMiddleware = [];
+        varal.e404 = null;
+        varal.e405 = null;
 
         varal.error = function (err, app) {
             let errorMsg = err.stack || err.message || 'Unknown Error';
             console.log(errorMsg);
-            if (app.resIsEnd === false)
-                app.res.end('Something went wrong!');
+            app.resEnd('Something went wrong!');
         };
 
         varal.use = function (middleware) {
@@ -44,7 +45,9 @@ let Varal = {
                     router: varal.router,
                     middleware: varal.middleware,
                     globalMiddleware: varal.globalMiddleware,
-                    next: true
+                    next: true,
+                    _e404: varal.e404,
+                    _e405: varal.e405
                 };
                 try {
                     Server.init(app);
