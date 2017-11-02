@@ -43,7 +43,8 @@ let Varal = {
                     staticPath: varal.staticPath,
                     router: varal.router,
                     middleware: varal.middleware,
-                    globalMiddleware: varal.globalMiddleware
+                    globalMiddleware: varal.globalMiddleware,
+                    next: true
                 };
                 try {
                     Server.init(app);

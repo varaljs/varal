@@ -101,13 +101,15 @@ server.group({prefix: 'group'}, function(group) {
 
 #### 定义中间件：
 ```javascript
-server.add('auth', function(app) {
+server.add('auth', function(app, next) {
     let username = app.fields.username;
     let password = app.fields.password;
     // Do auth
+    next();
 });
 ```
 `add` 函数可以定义中间件，传入两到三个参数，第一个参数为 `中间件命名`，第二个参数为 `回调句柄`，第三个参数为 `权重`，默认100，值低的优先运行，与定义顺序无关
+`next` 方法用于将请求传递给下一个中间件或路由，不执行此方法响应将会提前结束
 
 #### 加载全局中间件
 ```javascript
