@@ -30,7 +30,7 @@ $ npm install varal --save
 let server = require('varal').createNew();
 server.get('/', function (app) {
     app.text('Hello World');
-})
+});
 ```
 访问 `localhost:8888` 即可看到文本的输出。
 
@@ -56,15 +56,16 @@ let server = require('varal').createNew({
 ```javascript
 server.get('/', function (app) {
     app.text('Hello World');
-})
+}).name('index');
 ```
+链式调用 `name` 方法为路由命名
 
 #### 带有参数的路由
 
 ```javascript
 server.get('/user/{id}/info', function (app, id) {
     app.text('User\'s ID is ' + id);
-})
+});
 ```
 
 #### 获取请求数据
@@ -72,7 +73,7 @@ server.get('/user/{id}/info', function (app, id) {
 ```javascript
 server.post('/login', function (app) {
     app.text('Username : ' + app.fields.name);
-})
+});
 ```
 请求中的 `URL参数` 与 `表单数据` 都会存放在回调第一个参数的 `fields` 属性中
 
@@ -88,7 +89,7 @@ server.group({prefix: 'group'}, function(group) {
             //Do something
         });
     });
-})
+});
 ```
 `group` 方法可以传入一个回调函数，函数中可以定义路由，当传入两个参数时，第一个参数为一个配置对象：
 
@@ -104,27 +105,27 @@ server.add('auth', function(app) {
     let username = app.fields.username;
     let password = app.fields.password;
     // Do auth
-})
+});
 ```
 `add` 函数可以定义中间件，传入两到三个参数，第一个参数为 `中间件命名`，第二个参数为 `回调句柄`，第三个参数为 `权重`，默认100，值低的优先运行，与定义顺序无关
 
 #### 加载全局中间件
 ```javascript
-server.use(['auth', 'api'])
+server.use(['auth', 'api']);
 ```
 
 #### 为 `路由` 附加中间件
 ```javascript
 server.get('/', function(app) {
     // Do something
-}, ['auth'])
+}).use(['auth']);
 ```
 
 #### 为 `路由组` 附加中间件
 ```javascript
 server.group({middleware: ['auth']}, function(group) {
     // Some route
-})
+});
 ```
 
 ### 使用控制器
@@ -174,4 +175,5 @@ server.get('/', function (app) {
 * text(string)：返回状态码 `200` 并输出文本
 * json(object)：返回状态码 `200` 并输出Json，参数需要传入一个对象
 * render(view, object)：返回状态码 `200` 并使用视图模板输出 `HTML`
+* route(name)：跳转至命名为 `name` 的路由处理
 * resEnd()：手动终止响应，这之后将无视上述三个方法，但使用 `response` 对象写入请求仍可能报错
