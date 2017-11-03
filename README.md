@@ -195,16 +195,25 @@ server.e405 = function(app) {
 
 #### 属性
 * req：`request` 对象
-* res：`response` 对象
-* resIsEnd：响应是否已经结束
+* res：`response` 对象，**请尽量使用框架包装的方法，而不是此对象的方法，减少错误的发生**
+* resStatus：当前设定的响应状态码，默认为 `200`
+* resStatusMessage：当前设定的响应状态信息，默认为空字符串，此时将会根据状态码返回对应的状态信息
 * resEndWith：响应处理方式，可能值为 `null`，`route`，`static`
 * path：请求路径
 * fields：请求中的参数，包括 `URL` 参数、`application/x-www-form-urlencoded` 表单参数以及 `form-data` 单表参数
 * contentType：`content-type`
 
 #### 方法
-* text(string)：返回状态码 `200` 并输出文本
-* json(object)：返回状态码 `200` 并输出Json，参数需要传入一个对象
-* render(view, object)：返回状态码 `200` 并使用视图模板输出 `HTML`
+* setStatus(status)：设置响应状态码
+* setStatusMessage(msg)：设置响应状态信息
+* setHeaders(headers)：设置头部信息，参数类型为对象
+* setHeader(name, value)：类似 `response` 对象的 `setHeader` 方法
+* removeHeader(name)：类似 `response` 对象的 `removeHeader` 方法
+* clearHeaders()：清空已设置的头部信息
+* write(data)：类似 `response` 对象的 `write` 方法，但只会暂存数据，并不会立即发送，`text`，`json`，`render` 方法同理
+* text(string)：设置头部 `Content-Type: text/plain` 并暂存数据等待发送
+* json(object)：设置头部 `Content-Type: application/json` 并暂存数据等待发送，参数需要传入一个对象
+* render(view, object)：设置头部 `Content-Type: text/html` 并暂存模板数据等待发送
 * route(name)：跳转至命名为 `name` 的路由处理
-* resEnd()：手动终止响应，这之后将无视上述三个方法，但使用 `response` 对象写入请求仍可能报错
+* resEnd()：手动终止响应，此方法之后设置的请求数据将不会生效
+* resIsEnd()：响应是否已经结束，返回布尔值
