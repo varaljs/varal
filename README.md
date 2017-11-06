@@ -1,4 +1,5 @@
 # Varal
+
 Laravel 风格，轻量级的 Web 服务框架
 
 [![NPM Version][npm-image]][npm-url]
@@ -20,6 +21,7 @@ Laravel 风格，轻量级的 Web 服务框架
 * 使用更多 `ES6` 特性
 
 ## Installation 安装
+
 ```bash
 $ npm install varal --save
 ```
@@ -27,6 +29,7 @@ $ npm install varal --save
 ## Document 文档
 
 ### 基本使用
+
 ```javascript
 let server = require('varal').createNew();
 server.get('/', function (app) {
@@ -101,6 +104,7 @@ server.group({prefix: 'group'}, function(group) {
 ### 中间件(拦截器)
 
 #### 定义中间件：
+
 ```javascript
 server.add('auth', function(app, next) {
     let username = app.fields.username;
@@ -113,11 +117,13 @@ server.add('auth', function(app, next) {
 `next` 方法用于将请求传递给下一个中间件或路由，不执行此方法响应将会提前结束
 
 #### 加载全局中间件
+
 ```javascript
 server.use(['auth', 'api']);
 ```
 
 #### 为 `路由` 附加中间件
+
 ```javascript
 server.get('/', function(app) {
     // Do something
@@ -125,6 +131,7 @@ server.get('/', function(app) {
 ```
 
 #### 为 `路由组` 附加中间件
+
 ```javascript
 server.group({middleware: ['auth']}, function(group) {
     // Some route
@@ -147,6 +154,7 @@ exports = module.exports = {
 此例中，控制器文件需要以 `Node Module` 的方式返回带有 `index` 方法的对象。
 
 #### 使用视图/模板引擎
+
 ```javascript
 server.get('/', function (app) {
     app.render('test', {
@@ -162,10 +170,12 @@ server.get('/', function (app) {
 ```
 
 ### 服务实例 API
+
 框架模组输出的对象只包含了一个伪构造函数 `createNew`，服务实例使用这个方法创建，只有一个可选参数，用于传入配置信息。
 **你可以创建多个端口不同的实例并同时运行**
 
 #### 方法
+
 * run()：运行服务
 * get(path, callback)：创建一个接收 `GET` 请求的路由，可以链式调用 `name` 方法来命名，以及 `use` 方法来加载中间件
 * post(path, callback)：创建一个接收 `POST` 请求的路由，可以链式调用 `name` 方法来命名，以及 `use` 方法来加载中间件
@@ -174,6 +184,7 @@ server.get('/', function (app) {
 * use(middleware)：加载全局中间件，参数类型为数组
 
 #### 可以重新定义的方法
+
 * error：Node发生错误时的处理函数
 ```javascript
 server.error = function (err, app) {
@@ -192,9 +203,11 @@ server.e405 = function(app) {
 ```
 
 ### 请求实例 API
+
 每当请求发生时，都会实例化一个 `app` 对象，它提供的属性和方法可以对该请求进行处理，它经常作为参数出现在本框架的回调中，如 `路由` 与 `中间件`
 
 #### 属性
+
 * req：`request` 对象
 * res：`response` 对象，**请尽量使用框架包装的方法，而不是此对象的方法，减少错误的发生**
 * resStatus：当前设定的响应状态码，默认为 `200`
@@ -203,13 +216,16 @@ server.e405 = function(app) {
 * path：请求路径
 * fields：请求中的参数，包括 `URL` 参数、`application/x-www-form-urlencoded` 表单参数以及 `form-data` 单表参数
 * files：请求中上传的文件数组，数组中的对象属性如下：
+
     * fieldName: 字段名
     * originalFilename: 原文件名
     * path: 临时文件路径
     * headers: <Object>
     * size: 文件大小
 
+
 #### 方法
+
 * setStatus(status)：设置响应状态码
 * setStatusMessage(msg)：设置响应状态信息
 * setHeaders(headers)：设置头部信息，参数类型为对象
