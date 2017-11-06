@@ -223,6 +223,8 @@ server.e405 = function(app) {
     * headers: <Object>
     * size: 文件大小  
 
+
+
 #### 方法
 
 * setStatus(status)：设置响应状态码
