@@ -216,14 +216,12 @@ server.e405 = function(app) {
 * path：请求路径
 * fields：请求中的参数，包括 `URL` 参数、`application/x-www-form-urlencoded` 表单参数以及 `form-data` 单表参数
 * files：请求中上传的文件数组，数组中的对象属性如下：
-
     * fieldName: 字段名
     * originalFilename: 原文件名
     * path: 临时文件路径
     * headers: <Object>
-    * size: 文件大小  
-
-
+    * size: 文件大小
+-----
 
 #### 方法
 
