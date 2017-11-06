@@ -221,9 +221,7 @@ server.e405 = function(app) {
     * originalFilename: 原文件名
     * path: 临时文件路径
     * headers: <Object>
-    * size: 文件大小
-
------
+    * size: 文件大小  
 
 #### 方法
 
