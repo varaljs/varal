@@ -1,22 +1,23 @@
 # Varal
-Laravel 风格，轻量级的 Web 框架
+Laravel 风格，轻量级的 Web 服务框架
 
 [![NPM Version][npm-image]][npm-url]
 
 [npm-image]: https://img.shields.io/npm/v/varal.svg
 [npm-url]: https://npmjs.org/package/varal
 
-## Features 特性
+## Features 功能
 
 * Simple Route and RouteGroup
 * Controller
 * Middleware
 * Template Engine `Handlebars`
   
-## Todo 待开发
+## Todo 开发目标
 
-* Error Handler
-* Support files upload
+* 风格进一步向 `Laravel` 靠拢，从 `轻量级` 转向 `全栈级`
+* 分离出 `轻量级` 版本，不添加 `ORM` 等组件，仅提供一个 `Laravel` 风格的 Web 脚手架
+* 使用更多 `ES6` 特性
 
 ## Installation 安装
 ```bash
@@ -201,7 +202,12 @@ server.e405 = function(app) {
 * resEndWith：响应处理方式，可能值为 `null`，`route`，`static`
 * path：请求路径
 * fields：请求中的参数，包括 `URL` 参数、`application/x-www-form-urlencoded` 表单参数以及 `form-data` 单表参数
-* contentType：`content-type`
+* files：请求中上传的文件数组，数组中的对象属性如下：
+    * fieldName: 字段名
+    * originalFilename: 原文件名
+    * path: 临时文件路径
+    * headers: <Object>
+    * size: 文件大小
 
 #### 方法
 * setStatus(status)：设置响应状态码
