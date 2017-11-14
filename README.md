@@ -13,12 +13,6 @@ Laravel 风格，轻量级的 Web 服务框架
 * Controller
 * Middleware
 * Template Engine `Handlebars`
-  
-## Todo 开发目标
-
-* 风格进一步向 `Laravel` 靠拢，从 `轻量级` 转向 `全栈级`
-* 分离出 `轻量级` 版本，不添加 `ORM` 等组件，仅提供一个 `Laravel` 风格的 Web 脚手架
-* 使用更多 `ES6` 特性
 
 ## Installation 安装
 
