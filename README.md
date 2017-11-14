@@ -25,8 +25,8 @@ $ npm install varal --save
 ### 基本使用
 
 ```javascript
-let varal = require('varal');
-let server = new varal();
+const varal = require('varal');
+const server = new varal();
 server.get('/', function (app) {
     app.text('Hello World');
 });
@@ -36,8 +36,8 @@ server.get('/', function (app) {
 ### 配置
 
 ```javascript
-let varal = require('varal');
-let server = new varal({
+const varal = require('varal');
+const server = new varal({
     port: 80, // 默认值为 8888
     viewPath: 'YourViewPath', // 默认值为 'view'
     controllerPath: 'YourControllerPath', // 默认值为 'controller'
@@ -181,12 +181,6 @@ server.get('/', function (app) {
 
 #### 可以重新定义的方法
 
-* error：Node发生错误时的处理函数
-```javascript
-server.error = function (err, app) {
-    // Do something
-};
-```
 * e404：找不到匹配的路由或静态文件时调用
 * e405：查询路由时路径匹配但没有匹配的请求方法时调用
 ```javascript
@@ -231,5 +225,5 @@ server.e405 = function(app) {
 * json(object)：设置头部 `Content-Type: application/json` 并暂存数据等待发送，参数需要传入一个对象
 * render(view, object)：设置头部 `Content-Type: text/html` 并暂存模板数据等待发送
 * route(name)：跳转至命名为 `name` 的路由处理
-* resEnd()：发送请求数据并终止响应，此方法之后设置的请求数据将不会生效
+* resEnd(msg)：发送请求数据并终止响应，此方法之后设置的请求数据将不会生效
 * resIsEnd()：响应是否已经结束，返回布尔值

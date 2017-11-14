@@ -1,9 +1,9 @@
 'use strict';
 
-let http = require('http');
-let Router = require('./lib/router');
-let Middleware = require('./lib/middleware');
-let Application = require('./lib/application');
+const http = require('http');
+const Router = require('./lib/router');
+const Middleware = require('./lib/middleware');
+const Application = require('./lib/application');
 
 class Varal {
     constructor(options) {
@@ -19,10 +19,22 @@ class Varal {
     }
 
     error(err, app) {
-        let errorMsg = err.stack || err.message || 'Unknown Error';
+        const errorMsg = err.stack || err.message || 'Unknown Error';
         console.log(errorMsg);
-        app.resEnd('Something went wrong!');
+        app.res.end('Something went wrong!');
     }
+
+    e404(app) {
+        app.setStatus(404);
+        app.setHeader('Content-Type', 'text/html');
+        app.write('404 Not Found');
+    };
+
+    e405(app) {
+        app.setStatus(405);
+        app.setHeader('Content-Type', 'text/html');
+        app.write('405 Method Not Allowed');
+    };
 
     use(middleware) {
         this.globalMiddleware = middleware;
@@ -45,11 +57,11 @@ class Varal {
     }
 
     run() {
-        let self = this;
+        const self = this;
         http.createServer(function (request, response) {
             let app = new Application(self, request, response);
             try {
-                app.run();
+                app.handle();
             } catch (err) {
                 self.error(err, app)
             }
