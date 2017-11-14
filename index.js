@@ -2,66 +2,60 @@
 
 let http = require('http');
 let Router = require('./lib/router');
-let Server = require('./lib/server');
 let Middleware = require('./lib/middleware');
+let Application = require('./lib/application');
 
-let Varal = {
-    createNew: function (options) {
-        let varal = {};
-        options = options || {};
-        varal.name = options.name || 'default';
-        varal.port = options.port || 8888;
-        varal.viewPath = options.viewPath || 'view';
-        varal.controllerPath = options.controllerPath || 'controller';
-        varal.staticPath = options.staticPath || 'public';
-        varal.router = Router.createNew();
-        varal.get = varal.router.defaultGroup.get;
-        varal.post = varal.router.defaultGroup.post;
-        varal.group = varal.router.defaultGroup.group;
-        varal.middleware = Middleware.createNew();
-        varal.add = varal.middleware.add;
-        varal.globalMiddleware = [];
-        varal.e404 = null;
-        varal.e405 = null;
-
-        varal.error = function (err, app) {
-            let errorMsg = err.stack || err.message || 'Unknown Error';
-            console.log(errorMsg);
-            app.resEnd('Something went wrong!');
-        };
-
-        varal.use = function (middleware) {
-            varal.globalMiddleware = middleware;
-        };
-
-        varal.run = function () {
-            http.createServer(function (request, response) {
-                let app = {
-                    req: request,
-                    res: response,
-                    viewPath: varal.viewPath,
-                    controllerPath: varal.controllerPath,
-                    staticPath: varal.staticPath,
-                    router: varal.router,
-                    middleware: varal.middleware,
-                    globalMiddleware: varal.globalMiddleware,
-                    next: true,
-                    _e404: varal.e404,
-                    _e405: varal.e405
-                };
-                try {
-                    Server.init(app);
-                    if (app.hasForm !== true)
-                        app.handle();
-                } catch (err) {
-                    varal.error(err, app)
-                }
-            }).listen(this.port);
-            console.log("Varal Server '" + this.name + "' has started.");
-        };
-
-        return varal;
+class Varal {
+    constructor(options) {
+        this.name = 'default';
+        this.port = 8888;
+        this.viewPath = 'view';
+        this.staticPath = 'public';
+        this.controllerPath = 'controller';
+        Object.assign(this, options);
+        this.router = new Router();
+        this.middleware = new Middleware();
+        this.globalMiddleware = [];
     }
-};
+
+    error(err, app) {
+        let errorMsg = err.stack || err.message || 'Unknown Error';
+        console.log(errorMsg);
+        app.resEnd('Something went wrong!');
+    }
+
+    use(middleware) {
+        this.globalMiddleware = middleware;
+    }
+
+    get(...args) {
+        return this.router.defaultGroup.add('GET', ...args);
+    }
+
+    post(...args) {
+        return this.router.defaultGroup.add('POST', ...args);
+    }
+
+    group(...args) {
+        return this.router.defaultGroup.group(...args);
+    }
+
+    add(...args) {
+        return this.middleware.add(...args);
+    }
+
+    run() {
+        let self = this;
+        http.createServer(function (request, response) {
+            let app = new Application(self, request, response);
+            try {
+                app.run();
+            } catch (err) {
+                self.error(err, app)
+            }
+        }).listen(this.port);
+        console.log("Varal Server '" + this.name + "' has started.");
+    }
+}
 
 exports = module.exports = Varal;

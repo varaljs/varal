@@ -31,7 +31,8 @@ $ npm install varal --save
 ### 基本使用
 
 ```javascript
-let server = require('varal').createNew();
+let varal = require('varal');
+let server = new varal();
 server.get('/', function (app) {
     app.text('Hello World');
 });
@@ -41,7 +42,8 @@ server.get('/', function (app) {
 ### 配置
 
 ```javascript
-let server = require('varal').createNew({
+let varal = require('varal');
+let server = new varal({
     port: 80, // 默认值为 8888
     viewPath: 'YourViewPath', // 默认值为 'view'
     controllerPath: 'YourControllerPath', // 默认值为 'controller'
@@ -169,9 +171,9 @@ server.get('/', function (app) {
 <p>{{body}}</p>
 ```
 
-### 服务实例 API
+### 服务实例
 
-框架模组输出的对象只包含了一个伪构造函数 `createNew`，服务实例使用这个方法创建，只有一个可选参数，用于传入配置信息。
+服务实例使用构造方法创建，只有一个可选参数，用于传入配置信息。
 **你可以创建多个端口不同的实例并同时运行**
 
 #### 方法
@@ -202,7 +204,7 @@ server.e405 = function(app) {
 };
 ```
 
-### 请求实例 API
+### 请求生命周期实例
 
 每当请求发生时，都会实例化一个 `app` 对象，它提供的属性和方法可以对该请求进行处理，它经常作为参数出现在本框架的回调中，如 `路由` 与 `中间件`
 
@@ -219,7 +221,7 @@ server.e405 = function(app) {
     + fieldName: 字段名
     + originalFilename: 原文件名
     + path: 临时文件路径
-    + headers: \<Object\>
+    + headers: 头部信息对象
     + size: 文件大小
 
 #### 方法
@@ -235,5 +237,5 @@ server.e405 = function(app) {
 * json(object)：设置头部 `Content-Type: application/json` 并暂存数据等待发送，参数需要传入一个对象
 * render(view, object)：设置头部 `Content-Type: text/html` 并暂存模板数据等待发送
 * route(name)：跳转至命名为 `name` 的路由处理
-* resEnd()：手动终止响应，此方法之后设置的请求数据将不会生效
+* resEnd()：发送请求数据并终止响应，此方法之后设置的请求数据将不会生效
 * resIsEnd()：响应是否已经结束，返回布尔值
