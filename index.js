@@ -33,10 +33,13 @@ class Varal {
 
     loadRoutes() {
         const routesPath = this.rootPath + helper.pathFormat(this.routesPath);
+        if (!fs.existsSync(routesPath))
+            return;
         const routes = fs.readdirSync(routesPath);
         for (let i = 0; i < routes.length; i += 1) {
             let callback = require(routesPath + helper.pathFormat(routes[i]));
-            callback(this);
+            if (typeof callback === 'function')
+                callback(this);
         }
     }
 
