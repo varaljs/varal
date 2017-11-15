@@ -39,6 +39,7 @@ server.get('/', function (app) {
 const varal = require('varal');
 const server = new varal({
     port: 80, // 默认值为 8888
+    debug: true, // 默认值为 false
     viewPath: 'YourViewPath', // 默认值为 'view'
     controllerPath: 'YourControllerPath', // 默认值为 'controller'
     staticPath: 'YourPublicPath' // 默认值为 'public'
@@ -46,6 +47,7 @@ const server = new varal({
 ```
 
 * port：监听端口
+* debug：调试模式，设为 `true` 将在错误页面显示详细信息
 * viewPath：视图文件目录，例如入口文件为 `/www/index.js`，默认目录则是 `/www/view/`，下同
 * controllerPath：控制器目录
 * staticPath：静态资源目录
@@ -149,7 +151,7 @@ exports = module.exports = {
 ```
 此例中，控制器文件需要以 `Node Module` 的方式返回带有 `index` 方法的对象。
 
-#### 使用视图/模板引擎
+### 使用视图/模板引擎
 
 ```javascript
 server.get('/', function (app) {
@@ -168,7 +170,16 @@ server.get('/', function (app) {
 ### 服务实例
 
 服务实例使用构造方法创建，只有一个可选参数，用于传入配置信息。
-**你可以创建多个端口不同的实例并同时运行**
+
+#### 属性
+
+* port：监听端口
+* debug：调试模式
+* viewPath：视图文件路径，默认为 `'view'`
+* staticPath：静态文件路径，默认为 `'public'`
+* controllerPath：控制器文件路径，默认为 `'controller'`
+* rootPath：程序运行根目录
+* emitter：`events` 模块 `EventEmitter` 实例
 
 #### 方法
 
@@ -178,6 +189,7 @@ server.get('/', function (app) {
 * group([options, ]callback)：创建一个路由组，第一个为可选参数，传入配置选项
 * add(name, callback)：定义一个中间件，第一个参数为命名，用于绑定在路由或者路由组上
 * use(middleware)：加载全局中间件，参数类型为数组
+* on(type, listener)：添加监听事件
 
 #### 可以重新定义的方法
 
@@ -204,6 +216,7 @@ server.e405 = function(app) {
 * resStatusMessage：当前设定的响应状态信息，默认为空字符串，此时将会根据状态码返回对应的状态信息
 * resEndWith：响应处理方式，可能值为 `null`，`route`，`static`
 * path：请求路径
+* rootPath：程序运行根目录
 * fields：请求中的参数，包括 `URL` 参数、`application/x-www-form-urlencoded` 表单参数以及 `form-data` 单表参数
 * files：请求中上传的文件数组，数组中的对象属性如下：
     + fieldName: 字段名
@@ -220,10 +233,15 @@ server.e405 = function(app) {
 * setHeader(name, value)：类似 `response` 对象的 `setHeader` 方法
 * removeHeader(name)：类似 `response` 对象的 `removeHeader` 方法
 * clearHeaders()：清空已设置的头部信息
-* write(data)：类似 `response` 对象的 `write` 方法，但只会暂存数据，并不会立即发送，`text`，`json`，`render` 方法同理
+* initRes()：重置响应内容
+* write(data)：类似 `response` 对象的 `write` 方法，但只会暂存数据，并不会立即发送，`text`，`json`，`html` 方法同理
 * text(string)：设置头部 `Content-Type: text/plain` 并暂存数据等待发送
 * json(object)：设置头部 `Content-Type: application/json` 并暂存数据等待发送，参数需要传入一个对象
-* render(view, object)：设置头部 `Content-Type: text/html` 并暂存模板数据等待发送
+* html(data)：设置头部 `Content-Type: text/html` 并暂存数据等待发送
+* render(view, object)：使用视图模板设置响应内容
 * route(name)：跳转至命名为 `name` 的路由处理
+* redirect(url)：返回 `302` 重定向至指定 `URL`
 * resEnd(msg)：发送请求数据并终止响应，此方法之后设置的请求数据将不会生效
 * resIsEnd()：响应是否已经结束，返回布尔值
+* error(err)：抛出错误，参数为 `Error` 实例，重置响应并返回状态码 `500` 和错误页面，当调试模式开启时页面会显示详细错误信息
+* emit(type, ...args)：触发事件

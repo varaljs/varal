@@ -1,7 +1,7 @@
+.vscode
 .idea
 node_modules
 controller
 public
 view
 test.js
-.vscode/
