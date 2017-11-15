@@ -4,6 +4,7 @@ const fs = require('fs');
 const hbs = require('handlebars');
 const http = require('http');
 const path = require('path');
+const helper = require('./lib/helper');
 const Router = require('./lib/router');
 const Middleware = require('./lib/middleware');
 const Application = require('./lib/application');
@@ -14,6 +15,7 @@ class Varal {
         this.port = 8888;
         this.debug = false;
         this.viewPath = 'view';
+        this.routesPath = 'routes';
         this.staticPath = 'public';
         this.controllerPath = 'controller';
         this.rootPath = process.cwd();
@@ -25,7 +27,17 @@ class Varal {
         this.on('error', err => {
             const errorMsg = err.stack || err.message || 'Unknown Error';
             console.log(errorMsg);
-        })
+        });
+        this.loadRoutes();
+    }
+
+    loadRoutes() {
+        const routesPath = this.rootPath + helper.pathFormat(this.routesPath);
+        const routes = fs.readdirSync(routesPath);
+        for (let i = 0; i < routes.length; i += 1) {
+            let callback = require(routesPath + helper.pathFormat(routes[i]));
+            callback(this);
+        }
     }
 
     error(err, app) {

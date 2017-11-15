@@ -1,6 +1,6 @@
 {
   "name": "varal",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A Node Framework For Web Artisans",
   "main": "index.js",
   "scripts": {},

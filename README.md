@@ -27,7 +27,7 @@ $ npm install varal --save
 ```javascript
 const varal = require('varal');
 const server = new varal();
-server.get('/', function (app) {
+server.get('/', app => {
     app.text('Hello World');
 });
 ```
@@ -41,22 +41,25 @@ const server = new varal({
     port: 80, // 默认值为 8888
     debug: true, // 默认值为 false
     viewPath: 'YourViewPath', // 默认值为 'view'
-    controllerPath: 'YourControllerPath', // 默认值为 'controller'
-    staticPath: 'YourPublicPath' // 默认值为 'public'
+    routesPath: 'YourRoutesPath', // 默认值为 'routes'
+    staticPath: 'YourPublicPath', // 默认值为 'public'
+    controllerPath: 'YourControllerPath' // 默认值为 'controller'
 });
 ```
 
 * port：监听端口
 * debug：调试模式，设为 `true` 将在错误页面显示详细信息
 * viewPath：视图文件目录，例如入口文件为 `/www/index.js`，默认目录则是 `/www/view/`，下同
-* controllerPath：控制器目录
+* routesPath：路由文件目录，框架会自动加载该目录的所有文件
 * staticPath：静态资源目录
+* controllerPath：控制器目录
+
 
 ### 路由
 
 直接调用组件的 `get` 与 `post` 方法即可创建路由
 ```javascript
-server.get('/', function (app) {
+server.get('/', app =>  {
     app.text('Hello World');
 }).name('index');
 ```
@@ -65,7 +68,7 @@ server.get('/', function (app) {
 #### 带有参数的路由
 
 ```javascript
-server.get('/user/{id}/info', function (app, id) {
+server.get('/user/{id}/info', (app, id) => {
     app.text('User\'s ID is ' + id);
 });
 ```
@@ -73,7 +76,7 @@ server.get('/user/{id}/info', function (app, id) {
 #### 获取请求数据
 
 ```javascript
-server.post('/login', function (app) {
+server.post('/login', app => {
     app.text('Username : ' + app.fields.name);
 });
 ```
@@ -82,12 +85,12 @@ server.post('/login', function (app) {
 #### 路由组
 
 ```javascript
-server.group({prefix: 'group'}, function(group) {
-    group.get('/a', function(app) {
+server.group({prefix: 'group'}, group => {
+    group.get('/a', app => {
         // Do something
     });
-    group.group({prefix: 'b', middleware: ['auth', 'api']}, function(group) {
-        group.get('/c', function(app) {
+    group.group({prefix: 'b', middleware: ['auth', 'api']}, group => {
+        group.get('/c', app => {
             //Do something
         });
     });
@@ -99,14 +102,24 @@ server.group({prefix: 'group'}, function(group) {
 * middleware：中间件数组
 * weight：权重，默认100，值低的优先匹配
 
+#### 独立的路由文件
+
+系统会默认加载 `routes` 目录下的所有文件并作为路由处理，路由文件格式示例：
+
+```javascript
+exports = module.exports = (server) => {
+    server.get('/', 'HomeController@index');
+};
+```
+
 ### 中间件(拦截器)
 
 #### 定义中间件：
 
 ```javascript
-server.add('auth', function(app, next) {
-    let username = app.fields.username;
-    let password = app.fields.password;
+server.add('auth', (app, next) => {
+    const username = app.fields.username;
+    const password = app.fields.password;
     // Do auth
     next();
 });
@@ -123,7 +136,7 @@ server.use(['auth', 'api']);
 #### 为 `路由` 附加中间件
 
 ```javascript
-server.get('/', function(app) {
+server.get('/', app => {
     // Do something
 }).use(['auth']);
 ```
@@ -131,7 +144,7 @@ server.get('/', function(app) {
 #### 为 `路由组` 附加中间件
 
 ```javascript
-server.group({middleware: ['auth']}, function(group) {
+server.group({middleware: ['auth']}, group => {
     // Some route
 });
 ```
@@ -144,7 +157,7 @@ server.get('/', 'HomeController@index');
 `controller/HomeController.js`：
 ```javascript
 exports = module.exports = {
-    index: function (app) {
+    index(app) {
         app.text('From Controller');
     }
 }
@@ -154,7 +167,7 @@ exports = module.exports = {
 ### 使用视图/模板引擎
 
 ```javascript
-server.get('/', function (app) {
+server.get('/', app => {
     app.render('test', {
         'title': 'Hi!',
         'body': 'This page is rendered by handlebars'
@@ -196,10 +209,10 @@ server.get('/', function (app) {
 * e404：找不到匹配的路由或静态文件时调用
 * e405：查询路由时路径匹配但没有匹配的请求方法时调用
 ```javascript
-server.e404 = function(app) {
+server.e404 = app => {
     // Do something
 };
-server.e405 = function(app) {
+server.e405 = app => {
     // Do something
 };
 ```
