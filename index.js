@@ -1,10 +1,8 @@
 'use strict';
 
 const fs = require('fs');
-const hbs = require('handlebars');
 const http = require('http');
 const path = require('path');
-const helper = require('./lib/helper');
 const Router = require('./lib/router');
 const Middleware = require('./lib/middleware');
 const Application = require('./lib/application');
@@ -14,48 +12,39 @@ class Varal {
     constructor(options) {
         this.port = 8888;
         this.debug = false;
-        this.viewPath = 'view';
+        this.viewPath = 'views';
         this.routesPath = 'routes';
         this.staticPath = 'public';
-        this.controllerPath = 'controller';
+        this.controllerPath = 'controllers';
         this.rootPath = process.cwd();
         Object.assign(this, options);
         this.router = new Router();
         this.middleware = new Middleware();
         this.globalMiddleware = [];
         this.emitter = new EventEmitter();
-        this.on('error', err => {
-            const errorMsg = err.stack || err.message || 'Unknown Error';
-            console.log(errorMsg);
+        this.loadErrorHandler();
+    }
+
+    loadErrorHandler() {
+        process.on('uncaughtException', err => {
+            this.emitter.emit('error', err);
+            process.exit(1);
         });
-        this.loadRoutes();
+        this.on('error', err => {
+            // TODO : Log Error
+        });
     }
 
     loadRoutes() {
-        const routesPath = this.rootPath + helper.pathFormat(this.routesPath);
+        const routesPath = path.join(this.rootPath, this.routesPath);
         if (!fs.existsSync(routesPath))
             return;
         const routes = fs.readdirSync(routesPath);
         for (let i = 0; i < routes.length; i += 1) {
-            let callback = require(routesPath + helper.pathFormat(routes[i]));
+            let callback = require(path.join(routesPath, routes[i]));
             if (typeof callback === 'function')
                 callback(this);
         }
-    }
-
-    error(err, app) {
-        app.emit('error', err);
-        const template = fs.readFileSync(path.join('./lib/error.hbs'), 'utf-8');
-        const render = hbs.compile(template);
-        const data = {
-            debug: this.debug,
-            title: 'Something went wrong!',
-            body: err.stack || err.message || 'Unknown Error'
-        };
-        app.initRes();
-        app.setStatus(500);
-        app.html(render(data));
-        app.resEnd();
     }
 
     e404(app) {
@@ -75,19 +64,19 @@ class Varal {
     }
 
     get(path, callback) {
-        return this.router.defaultGroup.add('GET', path, callback);
+        return this.router.defaultGroup.get(path, callback);
     }
 
     post(path, callback) {
-        return this.router.defaultGroup.add('POST', path, callback);
-    }
-
-    group(options, callback) {
-        return this.router.defaultGroup.group(options, callback);
+        return this.router.defaultGroup.post(path, callback);
     }
 
     add(name, callback, weight) {
         return this.middleware.add(name, callback, weight);
+    }
+
+    group(options, callback) {
+        return this.router.defaultGroup.group(options, callback);
     }
 
     on(type, listener) {
@@ -95,13 +84,14 @@ class Varal {
     }
 
     run() {
+        this.loadRoutes();
         const self = this;
         http.createServer((request, response) => {
             let app = new Application(self, request, response);
             try {
                 app.handle();
             } catch (err) {
-                self.error(err, app)
+                app.error(err)
             }
         }).listen(this.port);
         console.log("Varal Server started.");

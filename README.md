@@ -40,16 +40,16 @@ const varal = require('varal');
 const server = new varal({
     port: 80, // 默认值为 8888
     debug: true, // 默认值为 false
-    viewPath: 'YourViewPath', // 默认值为 'view'
+    viewPath: 'YourViewPath', // 默认值为 'views'
     routesPath: 'YourRoutesPath', // 默认值为 'routes'
     staticPath: 'YourPublicPath', // 默认值为 'public'
-    controllerPath: 'YourControllerPath' // 默认值为 'controller'
+    controllerPath: 'YourControllerPath' // 默认值为 'controllers'
 });
 ```
 
 * port：监听端口
 * debug：调试模式，设为 `true` 将在错误页面显示详细信息
-* viewPath：视图文件目录，例如入口文件为 `/www/index.js`，默认目录则是 `/www/view/`，下同
+* viewPath：视图文件目录，例如入口文件为 `/www/index.js`，默认目录则是 `/www/views/`，下同
 * routesPath：路由文件目录，框架会自动加载该目录的所有文件
 * staticPath：静态资源目录
 * controllerPath：控制器目录
@@ -154,7 +154,7 @@ server.group({middleware: ['auth']}, group => {
 ```javascript
 server.get('/', 'HomeController@index');
 ```
-`controller/HomeController.js`：
+`controllers/HomeController.js`：
 ```javascript
 exports = module.exports = {
     index(app) {
@@ -174,10 +174,33 @@ server.get('/', app => {
     });
 })
 ```
-`view/test.hbs`：
+`views/test.hbs`：
 ```html
 <h1>{{title}}</h1>
 <p>{{body}}</p>
+```
+
+### 错误处理
+程序在任何时候发生错误都会触发 `error` 事件，监听这个事件来处理错误：
+
+```javascript
+server.on('error', function (err) {
+    console.log(err.stack);
+});
+```
+
+在 `请求生命周期` 内发生错误时会调用 `请求生命周期` 实例的 `error` 方法，它除了会触发 `error` 事件，还会向客户端输出一个状态码为 `500` 的错误页面，当服务的 `debug` 选项为 `true` 时会显示详细的错误信息
+
+你也可以在定义 `路由` 或 `中间件` 时手动调用 `error` 方法：
+
+```javascript
+server.post('user/create', function(app) {
+    try {
+        // Do Something
+    } catch (err) {
+        app.error(err);
+    }
+})
 ```
 
 ### 服务实例
@@ -188,10 +211,11 @@ server.get('/', app => {
 
 * port：监听端口
 * debug：调试模式
-* viewPath：视图文件路径，默认为 `'view'`
+* viewPath：视图文件路径，默认为 `'views'`
+* routesPath：路由文件目录，默认为 `'routes'`
 * staticPath：静态文件路径，默认为 `'public'`
-* controllerPath：控制器文件路径，默认为 `'controller'`
-* rootPath：程序运行根目录
+* controllerPath：控制器文件路径，默认为 `'controllers'`
+* rootPath：进程当前工作的目录
 * emitter：`events` 模块 `EventEmitter` 实例
 
 #### 方法
@@ -229,7 +253,7 @@ server.e405 = app => {
 * resStatusMessage：当前设定的响应状态信息，默认为空字符串，此时将会根据状态码返回对应的状态信息
 * resEndWith：响应处理方式，可能值为 `null`，`route`，`static`
 * path：请求路径
-* rootPath：程序运行根目录
+* rootPath：进程当前工作的目录
 * fields：请求中的参数，包括 `URL` 参数、`application/x-www-form-urlencoded` 表单参数以及 `form-data` 单表参数
 * files：请求中上传的文件数组，数组中的对象属性如下：
     + fieldName: 字段名

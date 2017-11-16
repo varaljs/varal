@@ -1,8 +1,4 @@
 .vscode
 .idea
 node_modules
-controller
-public
-routes
-view
-test.js
+test
