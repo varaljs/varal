@@ -180,6 +180,19 @@ server.get('/', app => {
 <p>{{body}}</p>
 ```
 
+### 事件
+使用服务实例的 `on` 方法注册监听器，使用请求生命周期实例的 `emit` 方法触发事件
+
+```javascript
+server.on('user_logged', function(user) {
+    console.log('User ' + user.id + ' logged')
+});
+server.post('login', function(app) {
+    // Do Auth
+    app.emit('user_logged', user)
+})
+```
+
 ### 错误处理
 程序在任何时候发生错误都会触发 `error` 事件，监听这个事件来处理错误：
 

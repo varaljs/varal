@@ -41,7 +41,7 @@ class Varal {
             return;
         const routes = fs.readdirSync(routesPath);
         for (let i = 0; i < routes.length; i += 1) {
-            let callback = require(path.join(routesPath, routes[i]));
+            const callback = require(path.join(routesPath, routes[i]));
             if (typeof callback === 'function')
                 callback(this);
         }
@@ -87,7 +87,7 @@ class Varal {
         this.loadRoutes();
         const self = this;
         http.createServer((request, response) => {
-            let app = new Application(self, request, response);
+            const app = new Application(self, request, response);
             try {
                 app.handle();
             } catch (err) {
