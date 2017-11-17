@@ -4,23 +4,25 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 const Router = require('./lib/router');
+const helper = require('./lib/helper');
 const Middleware = require('./lib/middleware');
 const Application = require('./lib/application');
 const EventEmitter = require('events').EventEmitter;
 
 class Varal {
+
     constructor(options) {
         this.port = 8888;
         this.debug = false;
+        this.logPath = 'logs';
         this.viewPath = 'views';
         this.routesPath = 'routes';
         this.staticPath = 'public';
         this.controllerPath = 'controllers';
-        this.rootPath = process.cwd();
         Object.assign(this, options);
+        this.rootPath = process.cwd();
         this.router = new Router();
         this.middleware = new Middleware();
-        this.globalMiddleware = [];
         this.emitter = new EventEmitter();
         this.loadErrorHandler();
     }
@@ -31,7 +33,7 @@ class Varal {
             process.exit(1);
         });
         this.on('error', err => {
-            // TODO : Log Error
+            this.log('error', err.stack || err);
         });
     }
 
@@ -47,6 +49,23 @@ class Varal {
         }
     }
 
+    log(type, content) {
+        const filePath = path.join(this.rootPath, this.logPath);
+        if (!fs.existsSync(filePath)) {
+            fs.mkdirSync(filePath);
+        }
+        const fileName = helper.date('isoDate') + '.log';
+        const file = path.join(filePath, fileName);
+        const date = helper.date();
+        content = `[${date}][${type}] ${content}\n`;
+        fs.appendFile(file, content, err => {
+            if (err) {
+                console.log('Failed to write log file:');
+                console.log(err.stack || err);
+            }
+        });
+    }
+
     e404(app) {
         app.setStatus(404);
         app.setHeader('Content-Type', 'text/html');
@@ -60,7 +79,10 @@ class Varal {
     };
 
     use(middleware) {
-        this.globalMiddleware = middleware;
+        if (Array.isArray(middleware))
+            this.middleware.globalMiddleware = helper.array_merge(this.middleware.globalMiddleware, middleware);
+        else if (typeof middleware === 'string')
+            this.middleware.globalMiddleware.push(middleware);
     }
 
     get(path, callback) {
@@ -96,6 +118,7 @@ class Varal {
         }).listen(this.port);
         console.log("Varal Server started.");
     }
+
 }
 
 exports = module.exports = Varal;

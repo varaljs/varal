@@ -1,12 +1,16 @@
 {
   "name": "varal",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "A Node Framework For Web Artisans",
   "main": "index.js",
   "scripts": {},
   "author": "dmpty",
   "license": "MIT",
+  "engines": {
+    "node": ">= 7.6.0"
+  },
   "dependencies": {
+    "dateformat": "^3.0.2",
     "handlebars": "^4.0.11",
     "multiparty": "^4.1.3",
     "serve-static": "^1.13.1"
