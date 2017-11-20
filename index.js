@@ -94,6 +94,10 @@ class Varal {
         return this.router.defaultGroup.post(path, callback);
     }
 
+    route(method, path, callback) {
+        return this.router.defaultGroup.add(method, path, callback);
+    }
+
     add(name, callback, weight) {
         return this.middleware.add(name, callback, weight);
     }
