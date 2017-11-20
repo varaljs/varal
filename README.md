@@ -1,9 +1,9 @@
 # Varal
 
-<div align="center">
+<p align="center">
 ![Varal-Logo](http://www.pty.ink/varal-400.png)
 [![NPM Version][npm-image]][npm-url]
-</div>
+</p>
 
 Laravel 风格，轻量级，使用 ES6 特性编写的，面向对象的 Web 服务框架
 
