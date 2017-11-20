@@ -1,11 +1,14 @@
-# Varal
+<br>
 
 <p align="center">
-![Varal-Logo](http://www.pty.ink/varal-400.png)
-[![NPM Version][npm-image]][npm-url]
+<img src="http://www.pty.ink/varal-400.png" alt="Logo">
 </p>
 
+# Varal
+
 Laravel 风格，轻量级，使用 ES6 特性编写的，面向对象的 Web 服务框架
+
+[![NPM Version][npm-image]][npm-url]
 
 [npm-image]: https://img.shields.io/npm/v/varal.svg
 [npm-url]: https://npmjs.org/package/varal
