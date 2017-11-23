@@ -5,14 +5,16 @@ const http = require('http');
 const path = require('path');
 const Router = require('./lib/router');
 const helper = require('./lib/helper');
+const Container = require('varal-container');
 const Controller = require('./lib/controller');
 const Middleware = require('./lib/middleware');
 const Application = require('./lib/application');
 const EventEmitter = require('events').EventEmitter;
 
-class Varal {
+class Varal extends Container{
 
     constructor(options) {
+        super();
         this.port = 8888;
         this.debug = false;
         this.logPath = 'logs';
