@@ -100,8 +100,8 @@ class Varal extends Container{
         return this.router.defaultGroup.add(method, path, callback);
     }
 
-    add(name, callback, weight) {
-        return this.middleware.add(name, callback, weight);
+    add(name, callback, priority) {
+        return this.middleware.add(name, callback, priority);
     }
 
     group(options, callback) {
