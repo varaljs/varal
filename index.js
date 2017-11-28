@@ -11,7 +11,7 @@ const Middleware = require('./lib/middleware');
 const Application = require('./lib/application');
 const EventEmitter = require('events').EventEmitter;
 
-class Varal extends Container{
+class Varal extends Container {
 
     constructor(options) {
         super();

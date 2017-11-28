@@ -1,6 +1,6 @@
 {
   "name": "varal",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "A Node Framework For Web Artisans",
   "main": "index.js",
   "scripts": {},
@@ -16,7 +16,7 @@
     "handlebars": "^4.0.11",
     "multiparty": "^4.1.3",
     "serve-static": "^1.13.1",
-    "varal-container": "^1.0.0"
+    "varal-container": "^1.0.1"
   },
   "repository": "dmpty/varal",
   "keywords": [
