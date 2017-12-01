@@ -73,13 +73,13 @@ class Varal extends Container {
         app.setStatus(404);
         app.setHeader('Content-Type', 'text/html');
         app.write('404 Not Found');
-    };
+    }
 
     e405(app) {
         app.setStatus(405);
         app.setHeader('Content-Type', 'text/html');
         app.write('405 Method Not Allowed');
-    };
+    }
 
     use(middleware) {
         if (Array.isArray(middleware))
@@ -120,10 +120,10 @@ class Varal extends Container {
             try {
                 app.handle();
             } catch (err) {
-                app.error(err)
+                app.error(err);
             }
         }).listen(this.port);
-        console.log("Varal Server started.");
+        console.log('Varal Server started.');
     }
 
 }
