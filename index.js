@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
@@ -28,15 +26,15 @@ class Varal extends Container {
         this.middleware = new Middleware();
         this.emitter = new EventEmitter();
         this.loadErrorHandler();
+        this.bind('varal', this);
     }
 
     loadErrorHandler() {
         process.on('uncaughtException', err => {
-            this.emitter.emit('error', err);
-            process.exit(1);
+            this.log('UncaughtException', err.stack || err, 1);
         });
         this.on('error', err => {
-            this.log('error', err.stack || err);
+            this.log('Error', err.stack || err);
         });
     }
 
@@ -52,7 +50,7 @@ class Varal extends Container {
         }
     }
 
-    log(type, content) {
+    log(type, content, exit) {
         const filePath = path.join(this.rootPath, this.logPath);
         if (!fs.existsSync(filePath)) {
             fs.mkdirSync(filePath);
@@ -65,20 +63,10 @@ class Varal extends Container {
             if (err) {
                 console.log('Failed to write log file:');
                 console.log(err.stack || err);
+            } else if (exit) {
+                process.exit(1);
             }
         });
-    }
-
-    e404(app) {
-        app.setStatus(404);
-        app.setHeader('Content-Type', 'text/html');
-        app.write('404 Not Found');
-    }
-
-    e405(app) {
-        app.setStatus(405);
-        app.setHeader('Content-Type', 'text/html');
-        app.write('405 Method Not Allowed');
     }
 
     use(middleware) {
@@ -116,7 +104,7 @@ class Varal extends Container {
         this.loadRoutes();
         const self = this;
         http.createServer((request, response) => {
-            const app = new Application(self, request, response);
+            const app = self.make(Application, request, response);
             try {
                 app.handle();
             } catch (err) {
