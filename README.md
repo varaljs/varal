@@ -7,6 +7,7 @@
 # Varal
 
 Laravel 风格，轻量级，使用 ES6 特性编写的，面向对象的 Web 服务框架
+
 欢迎 PR
 
 [![NPM Version][npm-image]][npm-url]
