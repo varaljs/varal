@@ -74,6 +74,8 @@ class Varal extends Container {
             this.middleware.globalMiddleware = helper.array_merge(this.middleware.globalMiddleware, middleware);
         else if (typeof middleware === 'string')
             this.middleware.globalMiddleware.push(middleware);
+        else if (typeof middleware === "function")
+            middleware(this);
     }
 
     get(path, callback) {
