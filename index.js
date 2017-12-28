@@ -13,6 +13,12 @@ class Varal extends Container {
 
     constructor(options) {
         super();
+        this.loadConfig(options);
+        this.loadComponent();
+        this.loadErrorHandler();
+    }
+
+    loadConfig(options) {
         this.port = 8888;
         this.debug = false;
         this.logPath = 'logs';
@@ -20,13 +26,14 @@ class Varal extends Container {
         this.routesPath = 'routes';
         this.staticPath = 'public';
         this.controllerPath = 'controllers';
-        Object.assign(this, options);
         this.rootPath = process.cwd();
+        Object.assign(this, options);
+    }
+
+    loadComponent() {
         this.router = new Router();
         this.middleware = new Middleware();
         this.emitter = new EventEmitter();
-        this.loadErrorHandler();
-        this.bind('varal', this);
     }
 
     loadErrorHandler() {
@@ -63,7 +70,8 @@ class Varal extends Container {
             if (err) {
                 console.log('Failed to write log file:');
                 console.log(err.stack || err);
-            } else if (exit) {
+            }
+            if (exit) {
                 process.exit(1);
             }
         });
@@ -106,14 +114,13 @@ class Varal extends Container {
         this.loadRoutes();
         const self = this;
         http.createServer((request, response) => {
-            const app = self.make(Application, request, response);
+            const app = new Application(self, request, response);
             try {
                 app.handle();
             } catch (err) {
                 app.error(err);
             }
         }).listen(this.port);
-        console.log('Varal Server started.');
     }
 
 }
