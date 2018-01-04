@@ -38,10 +38,13 @@ class Varal extends Container {
 
     loadErrorHandler() {
         process.on('uncaughtException', err => {
-            this.log('UncaughtException', err.stack || err, 1);
+            this.log('UncaughtException', err.stack || err);
+            process.exit(1);
         });
-        this.on('error', err => {
+        this.on('error', (err, exit) => {
             this.log('Error', err.stack || err);
+            if (exit)
+                process.exit(1);
         });
     }
 
@@ -57,7 +60,7 @@ class Varal extends Container {
         }
     }
 
-    log(type, content, exit) {
+    log(type, content) {
         const filePath = path.join(this.rootPath, this.logPath);
         if (!fs.existsSync(filePath)) {
             fs.mkdirSync(filePath);
@@ -70,9 +73,6 @@ class Varal extends Container {
             if (err) {
                 console.log('Failed to write log file:');
                 console.log(err.stack || err);
-            }
-            if (exit) {
-                process.exit(1);
             }
         });
     }
@@ -106,8 +106,8 @@ class Varal extends Container {
         return this.router.defaultGroup.group(options, callback);
     }
 
-    on(type, listener) {
-        return this.emitter.on(type, listener);
+    on(eventName, listener) {
+        return this.emitter.on(eventName, listener);
     }
 
     run() {
