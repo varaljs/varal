@@ -6,7 +6,7 @@
 
 # Varal
 
-Laravel 风格，轻量级，使用 ES6 特性编写的，面向对象的 Web 服务框架
+Varal 是一个运行于 Node，使用 ES6 编写的，拥有诸多面向对象特性的 Web 服务框架
 
 欢迎 PR
 
@@ -20,13 +20,14 @@ Laravel 风格，轻量级，使用 ES6 特性编写的，面向对象的 Web �
 * 路由与路由组
 * 中间件
 * 控制器
-* 模板引擎 `Handlebars`
+* 模板引擎 [art-template](https://github.com/aui/art-template)
 * IoC 与 DI 的设计模式
 
 ## Log
 
 * 0.4.10: 完成基本功能
 * 0.5.0: 完善扩展模块的载入；增加简单的 `MySql` 扩展，支持链式查询
+* 0.6.0: 更换默认模板引擎为 `art-template`；完善错误处理机制与错误页面
 
 ## Todo
 
