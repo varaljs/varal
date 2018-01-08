@@ -25,6 +25,7 @@ class Varal extends Container {
         this.viewPath = 'views';
         this.routesPath = 'routes';
         this.staticPath = 'public';
+        this.servicePath = 'services';
         this.controllerPath = 'controllers';
         this.rootPath = process.cwd();
         Object.assign(this, options);
