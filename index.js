@@ -11,24 +11,44 @@ const EventEmitter = require('events').EventEmitter;
 
 class Varal extends Container {
 
-    constructor(options) {
+    constructor() {
         super();
-        this.loadConfig(options);
+        this.loadConfig();
         this.loadComponent();
         this.loadErrorHandler();
     }
 
-    loadConfig(options) {
-        this.port = 8888;
-        this.debug = false;
-        this.logPath = 'logs';
-        this.viewPath = 'views';
-        this.routesPath = 'routes';
-        this.staticPath = 'public';
-        this.servicePath = 'services';
-        this.controllerPath = 'controllers';
-        this.rootPath = process.cwd();
-        Object.assign(this, options);
+    loadConfig() {
+        const rootPath = process.cwd();
+        const config = require(path.join(rootPath, 'config/config.js'));
+        const env = process.env.NODE_ENV;
+        let config_env = null;
+        switch (env) {
+            case 'dev':
+                config_env = require(path.join(rootPath, 'config/config.dev.js'));
+                break;
+            case 'beta':
+                config_env = require(path.join(rootPath, 'config/config.beta.js'));
+                break;
+            case 'production':
+                config_env = require(path.join(rootPath, 'config/config.prod.js'));
+                break;
+            default:
+                break;
+        }
+        if (config_env !== null)
+            Object.assign(config, config_env);
+        this.config = Object.assign({
+            port: 8888,
+            debug: false,
+            logPath: 'logs',
+            viewPath: 'views',
+            routesPath: 'routes',
+            staticPath: 'public',
+            servicePath: 'services',
+            controllerPath: 'controllers',
+            rootPath,
+        }, config);
     }
 
     loadComponent() {
@@ -50,7 +70,7 @@ class Varal extends Container {
     }
 
     loadRoutes() {
-        const routesPath = path.join(this.rootPath, this.routesPath);
+        const routesPath = path.join(this.config.rootPath, this.config.routesPath);
         if (!fs.existsSync(routesPath))
             return;
         const routes = fs.readdirSync(routesPath);
@@ -62,25 +82,20 @@ class Varal extends Container {
     }
 
     log(type, content) {
-        const filePath = path.join(this.rootPath, this.logPath);
+        const filePath = path.join(this.config.rootPath, this.config.logPath);
         if (!fs.existsSync(filePath)) {
             fs.mkdirSync(filePath);
         }
-        const fileName = helper.date('isoDate') + '.log';
+        const fileName = helper.date('Y-m-d') + '.log';
         const file = path.join(filePath, fileName);
         const date = helper.date();
         content = `[${date}][${type}] ${content}\n`;
-        fs.appendFile(file, content, err => {
-            if (err) {
-                console.log('Failed to write log file:');
-                console.log(err.stack || err);
-            }
-        });
+        fs.appendFileSync(file, content);
     }
 
     use(middleware) {
         if (Array.isArray(middleware))
-            this.middleware.globalMiddleware = helper.array_merge(this.middleware.globalMiddleware, middleware);
+            this.middleware.globalMiddleware = helper.arrayMerge(this.middleware.globalMiddleware, middleware);
         else if (typeof middleware === 'string')
             this.middleware.globalMiddleware.push(middleware);
         else if (typeof middleware === 'function')
@@ -93,6 +108,10 @@ class Varal extends Container {
 
     post(path, callback) {
         return this.router.defaultGroup.post(path, callback);
+    }
+
+    any(path, callback) {
+        return this.router.defaultGroup.add('ANY', path, callback);
     }
 
     route(method, path, callback) {
@@ -116,12 +135,10 @@ class Varal extends Container {
         const self = this;
         http.createServer((request, response) => {
             const app = new Application(self, request, response);
-            try {
-                app.handle();
-            } catch (err) {
+            app.handle().catch(err => {
                 app.error(err);
-            }
-        }).listen(this.port);
+            });
+        }).listen(this.config.port);
     }
 
 }
