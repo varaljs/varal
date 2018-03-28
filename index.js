@@ -16,6 +16,7 @@ class Varal extends Container {
         this.loadConfig();
         this.loadComponent();
         this.loadErrorHandler();
+        this.loadPlugins();
     }
 
     loadConfig() {
@@ -67,6 +68,16 @@ class Varal extends Container {
             if (exit)
                 process.exit(1);
         });
+    }
+
+    loadPlugins() {
+        if (Array.isArray(this.config.plugins))
+            for (let plugin of this.config.plugins)
+                if (typeof plugin.name === 'string' && typeof plugin.concrete === 'function')
+                    if (plugin.singleton === true)
+                        this.singleton(plugin.name, plugin.concrete);
+                    else
+                        this.bind(plugin.name, plugin.concrete);
     }
 
     loadRoutes() {
