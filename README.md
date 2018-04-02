@@ -11,6 +11,7 @@ Varal 是一个运行于 Node，使用 ES6 编写的，拥有诸多面向对象�
 欢迎 PR
 
 [![NPM Version][npm-image]][npm-url]
+[![Maintainability](https://api.codeclimate.com/v1/badges/ea102682c12c00a174f1/maintainability)](https://codeclimate.com/github/dmpty/varal/maintainability)
 
 [npm-image]: https://img.shields.io/npm/v/varal.svg
 [npm-url]: https://npmjs.org/package/varal
