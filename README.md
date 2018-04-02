@@ -1,7 +1,7 @@
 <br>
 
 <p align="center">
-<img src="http://www.pty.ink/varal-400.png" alt="Logo">
+<img src="https://pty-ink.oss-cn-hangzhou.aliyuncs.com/varal.png?x-oss-process=style/width_400" alt="Logo">
 </p>
 
 # Varal
@@ -17,22 +17,11 @@ Varal 是一个运行于 Node，使用 ES6 编写的，拥有诸多面向对象�
 
 ## Features
 
-* 路由与路由组
-* 中间件
-* 控制器
+* 路由->中间件->控制器->服务 模式
 * 模板引擎 [art-template](https://github.com/aui/art-template)
-* IoC 与 DI 的设计模式
+* 服务容器与依赖注入
+* 插件机制
 
-## Log
-
-* 0.4.10: 完成基本功能
-* 0.5.0: 完善扩展模块的载入；增加简单的 `MySql` 扩展，支持链式查询
-* 0.6.0: 更换默认模板引擎为 `art-template`；完善错误处理机制与错误页面
-
-## Todo
-
-* 完善 QueryBuilder，支持更复杂的查询语句，增加对 `PgSql` 的支持
-* 增加 ORM 模块
 
 ## Installation
 

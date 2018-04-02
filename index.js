@@ -9,6 +9,19 @@ const Middleware = require('./lib/middleware');
 const Application = require('./lib/application');
 const EventEmitter = require('events').EventEmitter;
 
+const ROOT_PATH = process.cwd();
+const CONFIG_DEFAULT = {
+    port: 8888,
+    debug: false,
+    logPath: 'logs',
+    viewPath: 'views',
+    routesPath: 'routes',
+    staticPath: 'public',
+    servicePath: 'services',
+    controllerPath: 'controllers',
+    rootPath: ROOT_PATH,
+};
+
 class Varal extends Container {
 
     constructor() {
@@ -20,36 +33,23 @@ class Varal extends Container {
     }
 
     loadConfig() {
-        const rootPath = process.cwd();
-        const config = require(path.join(rootPath, 'config/config.js'));
+        const config = require(path.join(ROOT_PATH, 'config/config.js'));
         const env = process.env.NODE_ENV;
         let config_env = null;
         switch (env) {
             case 'dev':
-                config_env = require(path.join(rootPath, 'config/config.dev.js'));
+                config_env = require(path.join(ROOT_PATH, 'config/config.dev.js'));
                 break;
             case 'beta':
-                config_env = require(path.join(rootPath, 'config/config.beta.js'));
+                config_env = require(path.join(ROOT_PATH, 'config/config.beta.js'));
                 break;
             case 'production':
-                config_env = require(path.join(rootPath, 'config/config.prod.js'));
-                break;
-            default:
+                config_env = require(path.join(ROOT_PATH, 'config/config.prod.js'));
                 break;
         }
         if (config_env !== null)
             Object.assign(config, config_env);
-        this.config = Object.assign({
-            port: 8888,
-            debug: false,
-            logPath: 'logs',
-            viewPath: 'views',
-            routesPath: 'routes',
-            staticPath: 'public',
-            servicePath: 'services',
-            controllerPath: 'controllers',
-            rootPath,
-        }, config);
+        this.config = Object.assign(CONFIG_DEFAULT, config);
     }
 
     loadComponent() {
