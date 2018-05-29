@@ -15,7 +15,6 @@ const CONFIG_DEFAULT = {
     debug: false,
     logPath: 'logs',
     viewPath: 'views',
-    routesPath: 'routes',
     staticPath: 'public',
     servicePath: 'services',
     controllerPath: 'controllers',
@@ -80,16 +79,19 @@ class Varal extends Container {
                         this.bind(plugin.name, plugin.concrete);
     }
 
-    loadRoutes() {
-        const routesPath = path.join(this.config.rootPath, this.config.routesPath);
-        if (!fs.existsSync(routesPath))
+    loadFile(filePath) {
+        const callback = require(path.join(this.config.rootPath, filePath));
+        if (typeof callback === 'function')
+            callback(this);
+    }
+
+    loadPath(dirPath) {
+        const realPath = path.join(this.config.rootPath, dirPath);
+        if (!fs.existsSync(realPath))
             return;
-        const routes = fs.readdirSync(routesPath);
-        for (let i = 0; i < routes.length; i += 1) {
-            const callback = require(path.join(routesPath, routes[i]));
-            if (typeof callback === 'function')
-                callback(this);
-        }
+        const routes = fs.readdirSync(realPath);
+        for (let i = 0; i < routes.length; i += 1)
+            this.loadFile(path.join(dirPath, routes[i]));
     }
 
     log(type, content) {
@@ -142,7 +144,6 @@ class Varal extends Container {
     }
 
     run() {
-        this.loadRoutes();
         const self = this;
         http.createServer((request, response) => {
             const app = new Application(self, request, response);
