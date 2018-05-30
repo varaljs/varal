@@ -33,9 +33,8 @@ class Varal extends Container {
 
     loadConfig() {
         const config = require(path.join(ROOT_PATH, 'config/config.js'));
-        const env = process.env.NODE_ENV;
-        let config_env = null;
-        switch (env) {
+        let config_env = {};
+        switch (process.env.NODE_ENV) {
             case 'dev':
                 config_env = require(path.join(ROOT_PATH, 'config/config.dev.js'));
                 break;
@@ -46,8 +45,7 @@ class Varal extends Container {
                 config_env = require(path.join(ROOT_PATH, 'config/config.prod.js'));
                 break;
         }
-        if (config_env !== null)
-            Object.assign(config, config_env);
+        Object.assign(config, config_env);
         this.config = Object.assign(CONFIG_DEFAULT, config);
     }
 
@@ -99,10 +97,8 @@ class Varal extends Container {
         if (!fs.existsSync(filePath)) {
             fs.mkdirSync(filePath);
         }
-        const fileName = helper.date('Y-m-d') + '.log';
-        const file = path.join(filePath, fileName);
-        const date = helper.date();
-        content = `[${date}][${type}] ${content}\n`;
+        const file = path.join(filePath, helper.date('Y-m-d') + '.log');
+        content = `[${helper.date()}][${type}] ${content}\n`;
         fs.appendFileSync(file, content);
     }
 
