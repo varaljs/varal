@@ -44,4 +44,4 @@ server.run();
 
 ## Document
 
-[Varal - 中文文档](http://d.varal.pty.ink)
+[Varal - 中文文档](https://github.com/varaljs/varal/wiki)
